@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./data/orbit_foundry.db
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - DEMO_MODE=true
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - CORS_ORIGINS=["http://localhost:5173","http://127.0.0.1:5173"]
+    volumes:
+      - backend-data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/api/v1/health', timeout=5).raise_for_status()"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+    networks:
+      - orbit-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "127.0.0.1:5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - orbit-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    command: start-dev --import-realm
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=dev-file
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 5
+    networks:
+      - orbit-network
+
+volumes:
+  backend-data:
+  keycloak-data:
+
+networks:
+  orbit-network:
+    driver: bridge

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "name": "orbit-foundry-ryan-vo",
+  "owner": "A220man",
+  "email": "ryandtvo@gmail.com",
+  "domain": "AI/ML developer tools",
+  "summary": "Work in progress: orbit-foundry-ryan-vo",
+  "workflows": [
+    "Browse and search plugin catalog with agents, skills, and commands across 94+ plugins",
+    "View harness compatibility matrix and generate installation commands for 7 AI coding tools",
+    "Install individual skills via gh skill or npx skills without full plugin"
+  ],
+  "auth": "oidc-keycloak-saml-broker",
+  "llm_providers": [
+    "openai-compatible",
+    "anthropic",
+    "gemini",
+    "ollama"
+  ],
+  "status": "work-in-progress"
+}
