@@ -10,6 +10,7 @@ class APIResponse(BaseModel, Generic[T]):
     data: Optional[T] = None
     error: Optional[str] = None
     meta: Optional[dict] = None
+    code: Optional[str] = None
 
 
 class PaginatedResponse(BaseModel, Generic[T]):

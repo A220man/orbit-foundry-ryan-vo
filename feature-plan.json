@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "current_feature": "project-skeleton",
+  "current_feature": "plugin-catalog-ui",
   "features": [
     {
       "id": "project-skeleton",
@@ -59,7 +59,7 @@
     {
       "id": "plugin-catalog-api",
       "title": "Plugin catalog API with CRUD operations",
-      "status": "planned",
+      "status": "done",
       "acceptance": [
         "GET /api/v1/plugins lists plugins with pagination",
         "GET /api/v1/plugins/{id} returns plugin detail",

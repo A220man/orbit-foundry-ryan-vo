@@ -3,7 +3,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Plugin, Agent, Skill, Command
-from app.models.schemas import PluginCreate, PluginUpdate, PaginatedResponse, PluginRead, PluginDetail
+from app.models.schemas import PluginCreate, PluginUpdate, PaginatedResponse, PluginRead, PluginDetail, AgentRead, SkillRead, CommandRead
 
 
 class PluginService:
@@ -81,9 +81,9 @@ class PluginService:
 
         return PluginDetail(
             **plugin.__dict__,
-            agents=[a.__dict__ for a in agents],
-            skills=[s.__dict__ for s in skills],
-            commands=[c.__dict__ for c in commands],
+            agents=[AgentRead.model_validate(a) for a in agents],
+            skills=[SkillRead.model_validate(s) for s in skills],
+            commands=[CommandRead.model_validate(c) for c in commands],
         )
 
     async def get_plugin_by_name(self, name: str) -> Optional[PluginDetail]:
@@ -91,7 +91,7 @@ class PluginService:
         plugin = result.scalar_one_or_none()
         if not plugin:
             return None
-        return await self.get_plugin(plugin.id)
+        return await self.get_plugin(int(plugin.id))
 
     async def create_plugin(self, plugin_data: PluginCreate) -> Plugin:
         plugin = Plugin(**plugin_data.model_dump())
