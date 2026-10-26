@@ -4,7 +4,7 @@ Each round completes one feature or repair. Future items are planned, not implem
 
 ## Current round
 
-project-skeleton
+plugin-catalog-ui
 
 ## Roadmap
 
@@ -26,7 +26,7 @@ Tests: `backend/tests/test_health.py`, `backend/tests/test_plugins.py`, `backend
 
 ### plugin-catalog-api — Plugin catalog API with CRUD operations
 
-Status: planned
+Status: done
 
 Acceptance:
 - GET /api/v1/plugins lists plugins with pagination

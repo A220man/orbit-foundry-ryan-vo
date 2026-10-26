@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
@@ -22,21 +23,19 @@ TestAsyncSessionLocal = async_sessionmaker(
 )
 
 
-async def override_get_db():
-    async with TestAsyncSessionLocal() as session:
-        try:
-            yield session
-        finally:
-            await session.close()
-
-
 @pytest.fixture(scope="function", autouse=True)
-async def setup_test_db():
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+def setup_test_db():
+    """Synchronous fixture to set up and tear down test database."""
+    import asyncio
+    async def _setup():
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    asyncio.run(_setup())
     yield
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+    async def _teardown():
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+    asyncio.run(_teardown())
     import os
     for f in ["./test_orbit_foundry.db", "./test_orbit_foundry.db-shm", "./test_orbit_foundry.db-wal"]:
         try:
@@ -45,18 +44,17 @@ async def setup_test_db():
             pass
 
 
-@pytest.fixture
-async def db_session(setup_test_db):
+@pytest_asyncio.fixture
+async def db_session():
     """Create a new database session for each test."""
-    async with TestAsyncSessionLocal() as session:
-        try:
-            yield session
-            await session.rollback()
-        finally:
-            await session.close()
+    session = TestAsyncSessionLocal()
+    try:
+        yield session
+    finally:
+        await session.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def client(db_session):
     app = create_app()
     app.dependency_overrides[get_db] = lambda: db_session
@@ -65,7 +63,7 @@ async def client(db_session):
     app.dependency_overrides.clear()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def sample_plugin(db_session):
     plugin = Plugin(
         name="python-development",
@@ -104,7 +102,7 @@ async def sample_plugin(db_session):
     return plugin
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def sample_harnesses(db_session):
     harnesses = [
         Harness(
