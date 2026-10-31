@@ -42,7 +42,7 @@ Tests: `backend/tests/test_plugins.py`
 
 ### plugin-catalog-ui — Plugin catalog UI with search and detail view
 
-Status: planned
+Status: done
 
 Acceptance:
 - Plugin list page with search/filter

@@ -81,7 +81,7 @@
     {
       "id": "plugin-catalog-ui",
       "title": "Plugin catalog UI with search and detail view",
-      "status": "planned",
+      "status": "done",
       "acceptance": [
         "Plugin list page with search/filter",
         "Plugin detail page showing agents, skills, commands",

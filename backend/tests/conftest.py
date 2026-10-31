@@ -17,49 +17,42 @@ test_engine = create_async_engine(
 )
 
 TestAsyncSessionLocal = async_sessionmaker(
-    test_engine,
+    bind=test_engine,
     class_=AsyncSession,
     expire_on_commit=False,
 )
 
 
-@pytest.fixture(scope="function", autouse=True)
-def setup_test_db():
-    """Synchronous fixture to set up and tear down test database."""
-    import asyncio
-    async def _setup():
-        async with test_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-    asyncio.run(_setup())
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def setup_test_db():
+    """Set up and tear down test database for each test."""
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield
-    async def _teardown():
-        async with test_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-    asyncio.run(_teardown())
-    import os
-    for f in ["./test_orbit_foundry.db", "./test_orbit_foundry.db-shm", "./test_orbit_foundry.db-wal"]:
-        try:
-            os.remove(f)
-        except OSError:
-            pass
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest_asyncio.fixture
 async def db_session():
     """Create a new database session for each test."""
-    session = TestAsyncSessionLocal()
-    try:
+    async with TestAsyncSessionLocal() as session:
         yield session
-    finally:
         await session.close()
 
 
 @pytest_asyncio.fixture
 async def client(db_session):
-    app = create_app()
-    app.dependency_overrides[get_db] = lambda: db_session
+    app = create_app(test_engine=test_engine)
+
+    def override_get_db():
+        yield db_session
+
+    app.dependency_overrides[get_db] = override_get_db
+
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
+
     app.dependency_overrides.clear()
 
 
@@ -68,37 +61,46 @@ async def sample_plugin(db_session):
     plugin = Plugin(
         name="python-development",
         display_name="Python Development",
-        description="Python, Django, FastAPI, testing, and packaging",
+        description="Python development plugin for AI coding assistants",
         category="development",
-        repository_url="https://github.com/wshobson/agents",
         license="MIT",
+        repository_url="https://github.com/example/python-development",
+        homepage_url="https://github.com/example/python-development",
+        is_external=False,
     )
     db_session.add(plugin)
-    await db_session.flush()
-
-    agent = Agent(
-        plugin_id=plugin.id,
-        name="python-expert",
-        description="Expert Python developer",
-        model_alias="opus",
-        tools=["read", "write", "bash", "edit"],
-    )
-    skill = Skill(
-        plugin_id=plugin.id,
-        name="python-testing-patterns",
-        description="Testing patterns for Python",
-        tags=["testing", "pytest"],
-    )
-    command = Command(
-        plugin_id=plugin.id,
-        name="python-scaffold",
-        description="Create a FastAPI service with tests",
-        usage="/python-development:python-scaffold Create a FastAPI service",
-    )
-    db_session.add_all([agent, skill, command])
-    await db_session.flush()
+    await db_session.commit()
     await db_session.refresh(plugin)
 
+    # Add an agent
+    agent = Agent(
+        name="test-agent",
+        description="A test agent",
+        model_alias="test-model",
+        tools=["tool1", "tool2"],
+        plugin_id=plugin.id,
+    )
+    db_session.add(agent)
+
+    # Add a skill
+    skill = Skill(
+        name="test-skill",
+        description="A test skill",
+        tags=["tag1", "tag2"],
+        plugin_id=plugin.id,
+    )
+    db_session.add(skill)
+
+    # Add a command
+    command = Command(
+        name="test-command",
+        description="A test command",
+        usage="test-command --help",
+        plugin_id=plugin.id,
+    )
+    db_session.add(command)
+
+    await db_session.commit()
     return plugin
 
 
@@ -108,18 +110,21 @@ async def sample_harnesses(db_session):
         Harness(
             name="claude-code",
             display_name="Claude Code",
-            description="Anthropic's CLI coding agent",
-            install_method="Plugin marketplace",
-            capabilities={"agents": True, "skills": True, "commands": True, "hooks": True, "mcp": True},
+            description="Anthropic's Claude Code",
+            install_method="npm install -g @anthropic-ai/claude-code",
+            capabilities={"agents": True, "skills": True, "commands": True},
         ),
         Harness(
-            name="codex-cli",
-            display_name="OpenAI Codex CLI",
-            description="OpenAI's command-line coding agent",
-            install_method="Native marketplace or generated artifacts",
-            capabilities={"agents": True, "skills": True, "commands": True, "hooks": False, "mcp": False},
+            name="codex",
+            display_name="Codex",
+            description="OpenAI's Codex",
+            install_method="npm install -g @openai/codex",
+            capabilities={"agents": True, "skills": True, "commands": False},
         ),
     ]
-    db_session.add_all(harnesses)
-    await db_session.flush()
+    for h in harnesses:
+        db_session.add(h)
+    await db_session.commit()
+    for h in harnesses:
+        await db_session.refresh(h)
     return harnesses

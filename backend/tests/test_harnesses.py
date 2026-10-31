@@ -13,7 +13,7 @@ async def test_list_harnesses(client: AsyncClient, sample_harnesses):
 
     names = [h["name"] for h in data["data"]["items"]]
     assert "claude-code" in names
-    assert "codex-cli" in names
+    assert "codex" in names
 
 
 @pytest.mark.asyncio
