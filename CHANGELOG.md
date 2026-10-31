@@ -1,8 +1,24 @@
 # Changelog
 
-## 1.1.0 — work-in-progress checkpoint
+## 1.2.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
+
+## 1.1.0 — 2026-10-31
+
+### Completed
+- Plugin catalog UI with search, filtering, pagination (PluginList component)
+- Plugin detail view showing agents, skills, commands (PluginDetail component)
+- Responsive design with loading/error/empty states
+- Typed API client from backend routes
+- All backend tests pass (16/16)
+- All frontend tests pass (8/8)
+- TypeScript typecheck passes
+- Vite production build succeeds
+
+### Fixed
+- Backend test fixtures updated to match model schema
+- Test database setup/teardown using async fixtures
 
 ## 1.0.0 — work-in-progress checkpoint
 
