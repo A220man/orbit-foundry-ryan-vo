@@ -1,6 +1,19 @@
 # Changelog
 
+## 1.3.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.2.0 — work-in-progress checkpoint
+
+### Added
+- Harness database seeding with 7 supported AI coding tools (Claude Code, Codex CLI, Cursor, OpenCode, Google Antigravity CLI, GitHub Copilot, Pi)
+- Capability comparison table on Harnesses page showing Agents/Skills/Commands support per harness
+- Installation command display in comparison table
+
+### Changed
+- Enhanced Harnesses page with sortable comparison matrix alongside detailed cards
+- Updated PLAN.md and feature-plan.json: harness-matrix now in_progress
 
 Partial code published for continued development. Known issues: STATUS.md.
 

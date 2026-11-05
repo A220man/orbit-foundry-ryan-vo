@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "current_feature": "plugin-catalog-ui",
+  "current_feature": "harness-matrix",
   "features": [
     {
       "id": "project-skeleton",
@@ -102,16 +102,19 @@
     {
       "id": "harness-matrix",
       "title": "Harness compatibility matrix and installation guide",
-      "status": "planned",
+      "status": "in_progress",
       "acceptance": [
         "GET /api/v1/harnesses returns supported harnesses",
         "Frontend page showing capability matrix",
-        "Installation commands per harness"
+        "Installation commands per harness",
+        "Database seeded with initial harness data on startup"
       ],
       "implementation": [
         "backend/app/api/harnesses.py",
-        "backend/app/models/harness.py",
-        "frontend/src/pages/Harnesses.tsx"
+        "backend/app/core/database.py",
+        "backend/app/models/__init__.py",
+        "frontend/src/pages/Harnesses.tsx",
+        "frontend/src/pages/Install.tsx"
       ],
       "tests": [
         "backend/tests/test_harnesses.py"
