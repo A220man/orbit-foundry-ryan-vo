@@ -68,6 +68,13 @@ export function HarnessesPage() {
 
   const harnesses = data.data.items;
 
+  // Capability labels for the comparison table
+  const capabilityLabels: Record<string, string> = {
+    agents: "Agents",
+    skills: "Skills",
+    commands: "Commands",
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -75,6 +82,63 @@ export function HarnessesPage() {
         <p className="text-slate-600 mt-1">Installation methods and capabilities for each AI coding tool</p>
       </div>
 
+      {/* Capability Comparison Table */}
+      <div className="overflow-x-auto mb-8">
+        <table className="w-full table-auto border-collapse">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-200">
+              <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">Harness</th>
+              {Object.entries(capabilityLabels).map(([key, label]) => (
+                <th key={key} className="px-4 py-3 text-center text-sm font-semibold text-slate-700">
+                  {label}
+                </th>
+              ))}
+              <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">Installation</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-200">
+            {harnesses.map((harness: HarnessRead) => (
+              <tr key={harness.id} className="hover:bg-slate-50">
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                      {HARNESS_ICONS[harness.name] || (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        </svg>
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-medium text-slate-900">{harness.display_name}</div>
+                      <div className="text-sm text-slate-500 font-mono">{harness.name}</div>
+                    </div>
+                  </div>
+                </td>
+                {Object.entries(capabilityLabels).map(([key]) => (
+                  <td key={key} className="px-4 py-3 text-center">
+                    {(harness.capabilities?.[key] as boolean) ? (
+                      <svg className="w-5 h-5 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-400 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
+                      </svg>
+                    )}
+                  </td>
+                ))}
+                <td className="px-4 py-3">
+                  <code className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-700 font-mono whitespace-nowrap">
+                    {harness.install_method}
+                  </code>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Detailed Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {harnesses.map((harness: HarnessRead) => (
           <div key={harness.id} className="card p-6 hover:shadow-md transition-shadow">

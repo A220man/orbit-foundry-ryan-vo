@@ -4,7 +4,7 @@ Each round completes one feature or repair. Future items are planned, not implem
 
 ## Current round
 
-plugin-catalog-ui
+harness-matrix
 
 ## Roadmap
 
@@ -56,14 +56,15 @@ Tests: `frontend/src/__tests__/PluginList.test.tsx`
 
 ### harness-matrix — Harness compatibility matrix and installation guide
 
-Status: planned
+Status: in_progress
 
 Acceptance:
 - GET /api/v1/harnesses returns supported harnesses
 - Frontend page showing capability matrix
 - Installation commands per harness
+- Database seeded with initial harness data on startup
 
-Implementation: `backend/app/api/harnesses.py`, `backend/app/models/harness.py`, `frontend/src/pages/Harnesses.tsx`
+Implementation: `backend/app/api/harnesses.py`, `backend/app/core/database.py`, `backend/app/models/__init__.py`, `frontend/src/pages/Harnesses.tsx`, `frontend/src/pages/Install.tsx`
 
 Tests: `backend/tests/test_harnesses.py`
 
