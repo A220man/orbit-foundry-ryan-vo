@@ -8,12 +8,17 @@ async def test_list_harnesses(client: AsyncClient, sample_harnesses):
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True
-    assert len(data["data"]["items"]) == 2
-    assert data["data"]["total"] == 2
+    assert len(data["data"]["items"]) == 7
+    assert data["data"]["total"] == 7
 
     names = [h["name"] for h in data["data"]["items"]]
     assert "claude-code" in names
-    assert "codex" in names
+    assert "codex-cli" in names
+    assert "cursor" in names
+    assert "opencode" in names
+    assert "antigravity" in names
+    assert "copilot" in names
+    assert "pi" in names
 
 
 @pytest.mark.asyncio
