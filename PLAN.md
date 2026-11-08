@@ -56,7 +56,7 @@ Tests: `frontend/src/__tests__/PluginList.test.tsx`
 
 ### harness-matrix — Harness compatibility matrix and installation guide
 
-Status: in_progress
+Status: done
 
 Acceptance:
 - GET /api/v1/harnesses returns supported harnesses

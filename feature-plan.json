@@ -102,7 +102,7 @@
     {
       "id": "harness-matrix",
       "title": "Harness compatibility matrix and installation guide",
-      "status": "in_progress",
+      "status": "done",
       "acceptance": [
         "GET /api/v1/harnesses returns supported harnesses",
         "Frontend page showing capability matrix",
