@@ -63,8 +63,9 @@ Acceptance:
 - Frontend page showing capability matrix
 - Installation commands per harness
 - Database seeded with initial harness data on startup
+- Install page fetches harnesses dynamically from API (no hardcoded list)
 
-Implementation: `backend/app/api/harnesses.py`, `backend/app/core/database.py`, `backend/app/models/__init__.py`, `frontend/src/pages/Harnesses.tsx`, `frontend/src/pages/Install.tsx`
+Implementation: `backend/app/api/harnesses.py`, `backend/app/core/database.py`, `backend/app/models/__init__.py`, `frontend/src/pages/Harnesses.tsx`, `frontend/src/pages/Install.tsx`, `frontend/src/api/client.ts`, `frontend/src/api/hooks.ts`
 
 Tests: `backend/tests/test_harnesses.py`
 

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { api, useApi } from "../api";
+import type { HarnessRead } from "../api/types";
 
 interface SkillInstallStep {
   id: string;
@@ -8,15 +10,16 @@ interface SkillInstallStep {
   copyText?: string;
 }
 
-const HARNESS_OPTIONS = [
-  { id: "claude-code", name: "Claude Code", icon: "🔷" },
-  { id: "codex-cli", name: "OpenAI Codex CLI", icon: "⚡" },
-  { id: "cursor", name: "Cursor", icon: "🎯" },
-  { id: "opencode", name: "OpenCode", icon: "💻" },
-  { id: "antigravity", name: "Google Antigravity CLI", icon: "🚀" },
-  { id: "copilot", name: "GitHub Copilot", icon: "🤖" },
-  { id: "pi", name: "Pi", icon: "🔮" },
-];
+// Icon mapping for harnesses (UI-only, not from API)
+const HARNESS_ICONS: Record<string, string> = {
+  "claude-code": "🔷",
+  "codex-cli": "⚡",
+  "cursor": "🎯",
+  "opencode": "💻",
+  "antigravity": "🚀",
+  "copilot": "🤖",
+  "pi": "🔮",
+};
 
 const INSTALL_STEPS: Record<string, SkillInstallStep[]> = {
   "claude-code": [
@@ -141,12 +144,43 @@ export function InstallPage() {
   const [selectedHarness, setSelectedHarness] = useState<string>("claude-code");
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
 
+  // Fetch harnesses from API
+  const { data: harnessesData, error: harnessesError, loading: harnessesLoading } = useApi(() => api.listHarnesses());
+
+  const harnesses = harnessesData?.data?.items || [];
   const steps = INSTALL_STEPS[selectedHarness] || [];
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedCommand(text);
     setTimeout(() => setCopiedCommand(null), 2000);
   };
+
+  // Render loading state
+  if (harnessesLoading && harnesses.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="empty-state">
+          <div className="empty-state-icon">⏳</div>
+          <h3 className="text-lg font-medium text-slate-700 mb-1">Loading harnesses...</h3>
+          <p className="text-slate-500">Please wait while we fetch the supported tools.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Render error state
+  if (harnessesError || (!harnessesLoading && harnesses.length === 0)) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="empty-state">
+          <div className="empty-state-icon">⚠️</div>
+          <h3 className="text-lg font-medium text-slate-700 mb-1">Failed to load harnesses</h3>
+          <p className="text-slate-500 mb-4">{harnessesError?.message || "No harnesses available"}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -158,20 +192,20 @@ export function InstallPage() {
       <div className="mb-8">
         <label className="form-label">Select your harness</label>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-          {HARNESS_OPTIONS.map((option) => (
+          {harnesses.map((harness: HarnessRead) => (
             <button
-              key={option.id}
+              key={harness.id}
               type="button"
-              onClick={() => setSelectedHarness(option.id)}
+              onClick={() => setSelectedHarness(harness.name)}
               className={`p-4 rounded-lg border-2 text-center transition-all ${
-                selectedHarness === option.id
+                selectedHarness === harness.name
                   ? "border-blue-500 bg-blue-50 text-blue-700 shadow-sm"
                   : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
               }`}
-              aria-pressed={selectedHarness === option.id}
+              aria-pressed={selectedHarness === harness.name}
             >
-              <div className="text-2xl mb-1">{option.icon}</div>
-              <div className="text-sm font-medium">{option.name}</div>
+              <div className="text-2xl mb-1">{HARNESS_ICONS[harness.name] || "🔧"}</div>
+              <div className="text-sm font-medium">{harness.display_name}</div>
             </button>
           ))}
         </div>
