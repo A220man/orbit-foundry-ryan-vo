@@ -1,6 +1,16 @@
 # Changelog
 
+## 1.5.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.4.0 — work-in-progress checkpoint
+
+### Changed
+- Updated Install page to fetch harnesses dynamically from API instead of hardcoded list
+- Added loading and error states for harness fetching on Install page
+- Harness icons mapped from API data via frontend constant
+- Updated PLAN.md acceptance criteria for harness-matrix feature
 
 Partial code published for continued development. Known issues: STATUS.md.
 
