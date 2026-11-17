@@ -4,7 +4,7 @@ Each round completes one feature or repair. Future items are planned, not implem
 
 ## Current round
 
-harness-matrix
+oidc-auth
 
 ## Roadmap
 
@@ -71,7 +71,7 @@ Tests: `backend/tests/test_harnesses.py`
 
 ### oidc-auth — OIDC authentication with Keycloak
 
-Status: planned
+Status: in_progress
 
 Acceptance:
 - Login/logout flow with PKCE

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "current_feature": "harness-matrix",
+  "current_feature": "oidc-auth",
   "features": [
     {
       "id": "project-skeleton",
@@ -126,7 +126,7 @@
     {
       "id": "oidc-auth",
       "title": "OIDC authentication with Keycloak",
-      "status": "planned",
+      "status": "in_progress",
       "acceptance": [
         "Login/logout flow with PKCE",
         "Protected routes require authentication",
