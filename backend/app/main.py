@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 from app.core.config import get_settings
 from app.core.database import init_db, engine, Base
-from app.api import health, plugins, harnesses
+from app.api import health, plugins, harnesses, auth
 from app.models.schemas import ErrorResponse, APIResponse
 
 settings = get_settings()
@@ -71,6 +71,7 @@ def create_app(test_engine=None) -> FastAPI:
     app.include_router(health.router, prefix="/api/v1")
     app.include_router(plugins.router, prefix="/api/v1")
     app.include_router(harnesses.router, prefix="/api/v1")
+    app.include_router(auth.router, prefix="/api/v1")
     return app
 
 
