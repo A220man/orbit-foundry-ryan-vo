@@ -1,6 +1,6 @@
 [project]
 name = "orbit-foundry-ryan-vo"
-version = "1.7.0"
+version = "1.8.0"
 description = "Multi-harness agentic plugin marketplace for Claude Code, Codex, Cursor, OpenCode, GitHub Copilot, Google Antigravity, and Pi"
 readme = "README.md"
 license = {text = "MIT"}
